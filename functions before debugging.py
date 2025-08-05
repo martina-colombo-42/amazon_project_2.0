@@ -67,32 +67,3 @@ def user_options(choice):
     pass
 
 #############################end of functions
-
-#1.Accept username and password for registration and save them in user_info
-print("*"*42)
-print("*** Welcome to Amazon Expenses Tracker ***")
-print("*"*42)
-username = input("Please enter your username: ")
-password = input("Please enter your password: ")
-registration(username,password)
-
-#2.See if the password is valid and save it
-print(password_checker(password))
-
-#3.Ask the user for a phone number until it's right
-phone_number = str(input("Please enter phone number to continue:" ))
-print(phone_number_checker(phone_number))
-
-#4.The program asks the user to log in (username and password)
-username_log = input("Write your username: ")
-password_log = input("Write your password: ")
-print(log_in(username_log,password_log))
-
-#5.After a successful login, print a welcome message
-print(f"Hello, {user_info["username"]}! Welcome to the Amazon Expense Tracker!")
-
-#6.Give 3 options to users that they need to pick from
-#1.enter a purchase 2.generate a report 3.quit
-
-
-
