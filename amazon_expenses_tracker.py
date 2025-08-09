@@ -1,5 +1,6 @@
-import re, json, os
-from datetime import time, datetime
+import re, json, os, time
+from datetime import datetime
+
 ###JSON FILES FUNCTIONS
 
 DATA_FILE = "user_data.json"
@@ -165,9 +166,9 @@ def user_options():
         elif choice == "2":
             print("Generating report...")
             time.sleep(2)
-            print(" "*24,"-"*29)
-            print(" "*24,"|   Amazon Expense Report   |")
-            print(" "*24,"-"*29)
+            print(" "*15,"-"*29)
+            print(" "*15,"|   Amazon Expense Report   |")
+            print(" "*15,"-"*29)
             print("")
             print("-"*60)
             print("")
@@ -175,13 +176,10 @@ def user_options():
                 print("Sorry, no items registered yet")
                 print("")
             else:
-                print(" "*15,"-"*29)
-                print(" "*15,"|   Amazon Expense Report   |")
-                print(" "*15,"-"*29)
                 print(f"name: {users["username"]}"," "*4,
                     "password: ***"," "*4,
                     "Tel: +49***"+users["phone_number"][-2:])
-                print(f"Date:", datetime.datetime.today().date())
+                print(f"Date:", datetime.today().date())
                 print("-"*60)
                 print("DELIVERY CHARGES", " "*6, "TOTAL ITEM COST")
                 total_delivery_cost = sum(item["weight"] for item in users["items"].values())
@@ -193,13 +191,19 @@ def user_options():
                 name_most_expensive = most_expensive_item["name"]
                 least_expensive_item = min(users["items"].values(), key=lambda item : item["cost"])
                 name_least_expensive = least_expensive_item["name"]
-                print(" "*2, name_most_expensive, " "* 17, name_least_expensive)
-                print(" "*2, f"cost: {most_expensive_item["cost"]:.2f}"," "*10, f"cost: {least_expensive_item["cost"]:.2f}")
+                print(" "*2, name_most_expensive, " "* 15, name_least_expensive)
+                print(" "*2, f"cost: {most_expensive_item["cost"]:.2f}"," "*8, f"cost: {least_expensive_item["cost"]:.2f}")
                 print("")
                 average_cost_item = (sum(item["cost"] for item in users["items"].values())) / len(users["items"])
                 print(f"AVERAGE COST OF ITEM PER ORDER: {average_cost_item:.2f} EURO")
-                print("PURCHASE DATE RANGE: ")
-                print("-"*10)
+                dates = [datetime.strptime(item["date"], "%Y/%m/%d").date() for item in users["items"].values()]
+                biggest_date = max(dates)
+                lowest_date = min(dates)
+                if biggest_date != lowest_date:
+                    print(f"PURCHASE DATE RANGE: {lowest_date} - {biggest_date}")
+                else:
+                    print(f"ALL ITEMS PURCHASED ON: {lowest_date}")
+                print("-"*60)
                 if (total_delivery_cost + total_items_cost) <= 500:
                     print("Note: You have not exceeded the spending limit of 500 EURO")
                 else:

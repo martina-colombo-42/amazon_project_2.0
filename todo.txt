@@ -1,3 +1,3 @@
-1. print the range of dates in which the purchases were made
+✅ 1. print the range of dates in which the purchases were made
 2. see if I can register different users each time it runs
 3. if the user already exists, skip to the log in
