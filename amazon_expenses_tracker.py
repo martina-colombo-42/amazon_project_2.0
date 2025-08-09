@@ -21,14 +21,23 @@ def save_data():
 
 ##########
 
+##########COLOURS FOR TEXT
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+CYAN = "\033[36m"
+RESET = "\033[0m"
+##########
+
 #############################start of functions
 
 def registration():
     check_password = False
     pattern_password = r"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,20}"
-    print("*"*25)
+    print("")
+    print(YELLOW + "*"*25)
     print("*** Welcome to Amazon ***")
-    print("*"*25)
+    print("*"*25 + RESET)
     print("")
     username = input("Enter your username (no spaces): ").strip()
     users["username"] = username
@@ -38,15 +47,15 @@ def registration():
             check_password = True
             users["password"] = password
             save_data()
-            print("Valid password! Wait...")
+            print(GREEN + "Valid password! Wait..." + RESET)
             time.sleep(2)
             print("")
-            print("-"*28)
+            print(CYAN + "-"*28)
             print("| Registration successful! |")
-            print("-"*28)
+            print("-"*28 + RESET)
             return ""
         else:
-            print("Sorry, invalid password!\nIt must have:\n*At least one number\n*One uppercase and one lowercase\n*One special symbol\n*Between 6 and 20 characters\nTry again!")
+            print(RED + "Sorry, invalid password!\nIt must have:\n*At least one number\n*One uppercase and one lowercase\n*One special symbol\n*Between 6 and 20 characters\nTry again!" + RESET)
 #the function saves the username after the input, and it also saves the password after checking if it is valid
     
 def phone_number_checker():
@@ -59,49 +68,50 @@ def phone_number_checker():
             users["phone_number"] = phone_number
             users["items"] = {}
             save_data()
-            return "Valid phone number!" 
+            return GREEN + "Valid phone number!" + RESET
         else:
-            print("Invalid number... please try again")
+            print(RED + "Invalid number... please try again" + RESET)
 #the function saves the phone number after the input, if it is valid
 
 def log_in():
     attempts = 2
     try_name = False
     print("")
-    print("-"*10)
+    print(CYAN + "-"*10)
     print("| Log In |")
-    print("-"*10)
+    print("-"*10 + RESET)
     print("")
+    print("Log in to confirm the registration.")
     while try_name == False:
         username_log = input("Write your username: ").strip()
         if username_log != users["username"]:
-            print("Wrong username, try again!")
+            print(RED + "Wrong username, try again!" + RESET)
         else:
             try_name = True
             password_log = input("Write your password: ").strip()
             while attempts >= 0:
                 if attempts == 0:
-                    print("You are out of guesses! Wait 5 seconds...")
+                    print(RED + "You are out of guesses! Wait 5 seconds..." + RESET)
                     time.sleep(5)
                     password_log = input("Write your password: ").strip()
                     if password_log != users["password"]:
-                        print("Wrong again! Sorry, you have to register again")
+                        print(RED + "Wrong again! Sorry, you have to register again" + RESET)
                         break
                     else:
-                        print("")
+                        print(YELLOW + "")
                         print("*"*43)
                         print("*** Welcome to Amazon Expenses Tracker! ***")
-                        print("*"*43)
+                        print("*"*43 + RESET)
                         return ""
                 elif password_log == users["password"]:
                     print("")
-                    print("*"*43)
+                    print(YELLOW + "*"*43)
                     print("*** Welcome to Amazon Expenses Tracker! ***")
-                    print("*"*43)
+                    print("*"*43 + RESET)
                     return ""
                 else:
                     attempts -= 1
-                    print("Wrong... try again")
+                    print(RED + "Wrong... try again" + RESET)
                     password_log = input("Write your password: ").strip()
 #let the user login with the credential they just used to register themselves
 
@@ -127,30 +137,30 @@ def user_options():
                         new_item["date"] = new_date
                         try_date = True
                     else:
-                        print("The date cannot be in the future. Try again!")
+                        print(RED + "The date cannot be in the future. Try again!" + RESET)
                 except ValueError:
-                    print("Invalid date format. Try again!")
+                    print(RED + "Invalid date format. Try again!" + RESET)
             while try_name == False:
                 new_name = input("Enter the item purchased (at least 3 characters): ").strip()
                 if len(new_name) >= 3:
                     new_item["name"] = new_name
                     try_name = True
                 else:
-                    print("The name is too short. Try again!")
+                    print(RED + "The name is too short. Try again!" + RESET)
             while try_cost == False:
                 try:
                     new_cost = float(input("Enter the cost of the item in Euro: "))
                     new_item["cost"] = new_cost
                     try_cost = True
                 except ValueError:
-                    print("That's not a number. Try again!")
+                    print(RED + "That's not a number. Try again!" + RESET)
             while try_weight == False:
                 try:
                     new_weight = float(input("Enter the weight of the item in kg: "))
                     new_item["weight"] = new_weight
                     try_weight = True
                 except (ValueError):
-                    print("That's not a number. Try again!")
+                    print(RED + "That's not a number. Try again!" + RESET)
             while try_quantity == False:
                 try:
                     new_quantity = int(input("Enter the quantity purchased (1 or more): "))
@@ -158,17 +168,18 @@ def user_options():
                         new_item["quantity"] = new_quantity
                         try_quantity = True
                     else:
-                        print("Quantity must be at least 1.")
+                        print(RED + "Quantity must be at least 1." + RESET)
                 except ValueError:
-                    print("Invalid value. Try again!")
+                    print(RED + "Invalid value. Try again!" + RESET)
             users["items"][new_key] = new_item
             save_data()
         elif choice == "2":
             print("Generating report...")
             time.sleep(2)
-            print(" "*15,"-"*29)
+            print("")
+            print(YELLOW + " "*15,"-"*29)
             print(" "*15,"|   Amazon Expense Report   |")
-            print(" "*15,"-"*29)
+            print(" "*15,"-"*29 + RESET)
             print("")
             print("-"*60)
             print("")
@@ -176,10 +187,10 @@ def user_options():
                 print("Sorry, no items registered yet")
                 print("")
             else:
-                print(f"name: {users["username"]}"," "*4,
-                    "password: ***"," "*4,
-                    "Tel: +49***"+users["phone_number"][-2:])
-                print(f"Date:", datetime.today().date())
+                print(f"NAME: {users["username"]}"," "*5,
+                    f"PASSWORD: ***"," "*5,
+                    f"TEL: +49***"+users["phone_number"][-2:])
+                print(f"DATE:", datetime.today().date())
                 print("-"*60)
                 print("DELIVERY CHARGES", " "*6, "TOTAL ITEM COST")
                 total_delivery_cost = sum(item["weight"] for item in users["items"].values())
@@ -205,9 +216,9 @@ def user_options():
                     print(f"ALL ITEMS PURCHASED ON: {lowest_date}")
                 print("-"*60)
                 if (total_delivery_cost + total_items_cost) <= 500:
-                    print("Note: You have not exceeded the spending limit of 500 EURO")
+                    print(CYAN + "Note: You have not exceeded the spending limit of 500 EURO" + RESET)
                 else:
-                    print("Note: You have exceeded the spending limit of 500 EURO")
+                    print(CYAN + "Note: You have exceeded the spending limit of 500 EURO" + RESET)
         elif choice == "3":
             print("Quitting program...")
             time.sleep(2)
@@ -215,7 +226,7 @@ def user_options():
             print(f"Thank you for your visit, {users["username"]}. Goodbye!")
         else:
             print("")
-            print("The operation selected is not valid: please choose from the available options.")
+            print(RED + "The operation selected is not valid: please choose from the available options." + RESET)
             print("")
 #let the user choose between adding items, printing a report, or quitting the program
 
