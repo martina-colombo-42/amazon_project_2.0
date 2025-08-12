@@ -1,29 +1,27 @@
 {
-    "username": "Larka",
-    "password": "Baaats!91",
-    "phone_number": "+49123456789",
-    "items": {
-        "item1": {
-            "date": "2025/08/09",
-            "name": "book",
-            "cost": 15.0,
-            "weight": 0.3,
-            "quantity": 2,
-            "total": 30.0
-        },
-        "item2": {
-            "date": "2025/07/01",
-            "name": "phone",
-            "cost": 200.0,
-            "weight": 0.1,
-            "quantity": 1
-        },
-        "item3": {
-            "date": "2025/08/08",
-            "name": "game",
-            "cost": 70.0,
-            "weight": 0.0,
-            "quantity": 1
+    "Larka": {
+        "password": "Baaats!91",
+        "phone_number": "+49123456789",
+        "items": {
+            "item1": {
+                "date": "2025/08/12",
+                "name": "book",
+                "cost": 15.0,
+                "weight": 0.3,
+                "quantity": 2
+            },
+            "item2": {
+                "date": "2025/07/29",
+                "name": "phone",
+                "cost": 200.0,
+                "weight": 0.1,
+                "quantity": 1
+            }
         }
+    },
+    "laniakea": {
+        "password": "Staaars!91",
+        "phone_number": "+49000000000",
+        "items": {}
     }
 }

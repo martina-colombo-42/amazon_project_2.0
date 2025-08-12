@@ -1,4 +1,4 @@
-import re, json, os, time
+import re, json, os, time, sys
 from datetime import datetime
 
 ###JSON FILES FUNCTIONS
@@ -31,29 +31,42 @@ RESET = "\033[0m"
 
 #############################start of functions
 
+current_user = None
+
 def registration():
+    global current_user
     check_password = False
     pattern_password = r"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,20}"
     username_unchecked = True
+    #make the user choose a username
     while username_unchecked == True:
-        username = input("Enter your username (no spaces): ").strip()
-        if username != users.get("username"):
-            users["username"] = username
+        username = input("Choose your username (no spaces): ").strip()
+    #if the username doesn't exist, it is created
+        if username not in users:
+            users[username] = {}
+            current_user = username
             username_unchecked = False
+    #if the username exists, prompt for a different one
         else:
-            existing = input(RED + "Sorry, the username is already taken. Is that you? (y/n): ").strip()
+            #check if the user has already registered with that name
+            existing = input(RED + "Sorry, the username is already taken. Is that you? (y/n): " + RESET).strip()
+            #if yes, prompt tgen to login
             if existing == "y":
                 username_unchecked = False
+                current_user = username
                 return log_in()
+            #if not, tell it to choose another username
             elif existing == "n":
                 print("Please choose another username.")
             else:
-                print("Invalid choice.")
+                print("")
+                print(RED + "The operation selected is not valid." + RESET)
+                print("")
     while check_password == False:
-        password = input("Enter your password (no spaces): ").strip()
+        password = input("Choose your password (no spaces): ").strip()
         if re.search(pattern_password,password):
             check_password = True
-            users["password"] = password
+            users[current_user]["password"] = password
             save_data()
             print(GREEN + "Valid password! Wait..." + RESET)
             time.sleep(2)
@@ -67,14 +80,15 @@ def registration():
 #the function saves the username after the input, and it also saves the password after checking if it is valid
     
 def phone_number_checker():
+    global current_user
     phone = False
     pattern_phone = r"^(\+49)[0-9]{8,12}$"
     while phone == False:
         phone_number = input("Enter phone number to continue (it must start with +49, no spaces): ").strip()
         if re.search(pattern_phone,phone_number):
             phone = True
-            users["phone_number"] = phone_number
-            users["items"] = {}
+            users[current_user]["phone_number"] = phone_number
+            users[current_user]["items"] = {}
             save_data()
             print(GREEN + "Valid phone number!" + RESET)
             return log_in()
@@ -83,35 +97,48 @@ def phone_number_checker():
 #the function saves the phone number after the input, if it is valid
 
 def log_in():
+    global current_user
     attempts = 2
-    try_name = False
+    try_name = True
     print("")
     print(CYAN + "-"*10)
     print("| Log In |")
     print("-"*10 + RESET)
     print("")
-    while try_name == False:
+    while try_name == True:
         username_log = input("Write your username: ").strip()
-        if username_log not in users["username"]:
-            print(RED + "There is nobody with that username, try again!" + RESET)
+        if username_log not in users:
+                username_checking = True
+                while username_checking == True:
+                    registration_checking = input(RED + "There is nobody with that username, are you sure you have registered already? (y/n): " + RESET).lower().strip()
+                    if registration_checking == "y":
+                        username_checking = False
+                    elif registration_checking == "n":
+                        print(CYAN + "Let's register to Amazon!" + RESET)
+                        return registration()
+                    else:
+                        print("")
+                        print(RED + "The operation selected is not valid: please choose from the available options." + RESET)
+                        print("")
         else:
             try_name = True
+            current_user = username_log
             password_log = input("Write your password: ").strip()
             while attempts >= 0:
                 if attempts == 0:
                     print(RED + "You are out of guesses! Wait 5 seconds..." + RESET)
                     time.sleep(5)
                     password_log = input("Write your password: ").strip()
-                    if password_log != users["password"]:
+                    if password_log != users[current_user]["password"]:
                         print(RED + "Wrong again! Sorry, you have to restart the process." + RESET)
-                        break
+                        sys.exit()
                     else:
                         print(YELLOW + "")
                         print("*"*43)
                         print("*** Welcome to Amazon Expenses Tracker! ***")
                         print("*"*43 + RESET)
                         return options()
-                elif password_log == users["password"]:
+                elif password_log == users[current_user]["password"]:
                     print("")
                     print(YELLOW + "*"*43)
                     print("*** Welcome to Amazon Expenses Tracker! ***")
@@ -124,6 +151,7 @@ def log_in():
 #let the user login with the credential they just used to register themselves
 
 def options():
+    global current_user
     choices = True
     while choices == True:
         print("-"*60)
@@ -134,15 +162,14 @@ def options():
         elif choice == "2":
             return print_report()
         elif choice == "3":
-            exit_program()
-            break
+            return exit_program()
         else:
             print("")
             print(RED + "The operation selected is not valid: please choose from the available options." + RESET)
             print("")
 
 def register_item():
-    new_key = "item"+str(len(users["items"])+1)
+    new_key = "item"+str(len(users[current_user]["items"])+1)
     new_item = {}
     try_date = False
     try_name = False
@@ -191,11 +218,12 @@ def register_item():
                 print(RED + "Quantity must be at least 1." + RESET)
         except ValueError:
             print(RED + "Invalid value. Try again!" + RESET)
-    users["items"][new_key] = new_item
+    users[current_user]["items"][new_key] = new_item
     save_data()
     options()
 
 def print_report():
+    global current_user
     print("Generating report...")
     time.sleep(2)
     print("")
@@ -205,32 +233,32 @@ def print_report():
     print("")
     print("-"*60)
     print("")
-    if not users["items"]:
+    if not users[current_user]["items"]:
         print("Sorry, no items registered yet")
         print("")
         return options()
     else:
-        print(f"NAME: {users["username"]}"," "*5,
+        print(f"NAME: {current_user}"," "*5,
             f"PASSWORD: ***"," "*5,
-            f"TEL: +49***"+users["phone_number"][-2:])
+            f"TEL: +49***"+users[current_user]["phone_number"][-2:])
         print(f"DATE:", datetime.today().date())
         print("-"*60)
         print("DELIVERY CHARGES", " "*6, "TOTAL ITEM COST")
-        total_delivery_cost = sum(item["weight"] for item in users["items"].values())
-        total_items_cost = sum(item["cost"] for item in users["items"].values())
+        total_delivery_cost = sum(item["weight"] * item["quantity"] for item in users[current_user]["items"].values())
+        total_items_cost = sum(item["cost"] * item["quantity"] for item in users[current_user]["items"].values())
         print(" "*2, f"{total_delivery_cost:.2f}", "EURO", " "*13, f"{total_items_cost:.2f}", "EURO")
         print("")
         print("MOST EXPENSIVE", " "*6, "LEAST EXPENSIVE")
-        most_expensive_item = max(users["items"].values(), key=lambda item : item["cost"])
+        most_expensive_item = max(users[current_user]["items"].values(), key=lambda item : item["cost"])
         name_most_expensive = most_expensive_item["name"]
-        least_expensive_item = min(users["items"].values(), key=lambda item : item["cost"])
+        least_expensive_item = min(users[current_user]["items"].values(), key=lambda item : item["cost"])
         name_least_expensive = least_expensive_item["name"]
         print(" "*2, name_most_expensive, " "* 15, name_least_expensive)
         print(" "*2, f"cost: {most_expensive_item["cost"]:.2f}"," "*8, f"cost: {least_expensive_item["cost"]:.2f}")
         print("")
-        average_cost_item = (sum(item["cost"] for item in users["items"].values())) / len(users["items"])
+        average_cost_item = (sum(item["cost"] for item in users[current_user]["items"].values())) / len(users[current_user]["items"])
         print(f"AVERAGE COST OF ITEM PER ORDER: {average_cost_item:.2f} EURO")
-        dates = [datetime.strptime(item["date"], "%Y/%m/%d").date() for item in users["items"].values()]
+        dates = [datetime.strptime(item["date"], "%Y/%m/%d").date() for item in users[current_user]["items"].values()]
         biggest_date = max(dates)
         lowest_date = min(dates)
         if biggest_date != lowest_date:
@@ -247,7 +275,8 @@ def print_report():
 def exit_program():
     print("Quitting program...")
     time.sleep(2)
-    print(f"{CYAN}Thank you for your visit, {users["username"]}. Goodbye!{RESET}")
+    print(f"{CYAN}Thank you for your visit, {current_user}. Goodbye!{RESET}")
+    sys.exit()
     
 
 #let the user choose between adding items, printing a report, or quitting the program
@@ -261,7 +290,7 @@ def main ():
     print("*** Welcome to Amazon ***")
     print("*"*25 + RESET)
     print("")
-    print("First, we'd like to know if you are a new costumer, or a returning one.")
+    print("First, we'd like to know if you are a new customer, or a returning one.")
     access = input("Do you want to login, or to register? (l/r): ").strip()
     if access == "r":
         registration()
