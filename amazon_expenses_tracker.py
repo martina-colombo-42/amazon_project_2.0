@@ -215,15 +215,21 @@ def register_item():
     while try_cost == False:
         try:
             new_cost = float(input("Enter the cost of the item in Euro: "))
-            new_item["cost"] = new_cost
-            try_cost = True
+            if new_cost > 0:
+                new_item["cost"] = new_cost
+                try_cost = True
+            else:
+                print(RED + "Sorry, it needs to be more than 0." + RESET)
         except ValueError:
             print(RED + "That's not a number. Try again!" + RESET)
     while try_weight == False:
         try:
             new_weight = float(input("Enter the weight of the item in kg: "))
-            new_item["weight"] = new_weight
-            try_weight = True
+            if new_weight > 0:
+                new_item["weight"] = new_weight
+                try_weight = True
+            else:
+                print(RED + "Sorry, it needs to be more than 0." + RESET)
         except (ValueError):
             print(RED + "That's not a number. Try again!" + RESET)
     while try_quantity == False:
@@ -309,10 +315,17 @@ def main ():
     print("*"*25 + RESET)
     print("")
     print("First, we'd like to know if you are a new customer, or a returning one.")
-    access = input("Do you want to login, or to register? (l/r): ").strip()
-    if access == "r":
-        registration()
-    log_in()
+    register_login = True
+    while register_login == True:
+        access = input("Do you want to login, or to register? (l/r): ").strip()
+        if access == "r":
+            register_login = False
+            registration()
+        elif access == "l":
+            log_in()
+            register_login = False
+        else:
+            print("Invalid input. Please choose between y/n")
     options()
 
 main()

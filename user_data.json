@@ -23,5 +23,58 @@
         "password": "Staaars!91",
         "phone_number": "+49000000000",
         "items": {}
+    },
+    "Juri": {
+        "password": "Foood!42",
+        "phone_number": "+4900000000",
+        "items": {
+            "item1": {
+                "date": "2025/08/12",
+                "name": "kong",
+                "cost": 15.0,
+                "weight": 0.3,
+                "quantity": 1
+            }
+        }
+    },
+    "Manuel": {
+        "password": "Eevee!90",
+        "phone_number": "+4900000000",
+        "items": {
+            "item1": {
+                "date": "2025/08/10",
+                "name": "game on steam",
+                "cost": 50.0,
+                "weight": 0.0,
+                "quantity": 1
+            },
+            "item2": {
+                "date": "2025/07/10",
+                "name": "book",
+                "cost": 10.0,
+                "weight": 0.3,
+                "quantity": 5
+            }
+        }
+    },
+    "Bear": {
+        "password": "Salmon9!",
+        "phone_number": "+4900000000",
+        "items": {
+            "item1": {
+                "date": "2025/08/11",
+                "name": "cave",
+                "cost": 1000.0,
+                "weight": 1000000.0,
+                "quantity": 1
+            },
+            "item2": {
+                "date": "2025/07/29",
+                "name": "tree",
+                "cost": 20.0,
+                "weight": 30.0,
+                "quantity": 1
+            }
+        }
     }
 }
