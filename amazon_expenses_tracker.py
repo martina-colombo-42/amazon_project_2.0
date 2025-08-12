@@ -36,7 +36,7 @@ current_user = None
 def registration():
     global current_user
     check_password = False
-    pattern_password = r"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,20}"
+    pattern_password = r"(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{6,20}"
     username_unchecked = True
     #make the user choose a username
     while username_unchecked == True:
@@ -50,7 +50,7 @@ def registration():
         else:
             #check if the user has already registered with that name
             existing = input(RED + "Sorry, the username is already taken. Is that you? (y/n): " + RESET).strip()
-            #if yes, prompt tgen to login
+            #if yes, prompt to login
             if existing == "y":
                 username_unchecked = False
                 current_user = username
@@ -64,8 +64,10 @@ def registration():
                 print("")
     while check_password == False:
         password = input("Choose your password (no spaces): ").strip()
+        #checks if the password is valid
         if re.search(pattern_password,password):
             check_password = True
+            #saves it
             users[current_user]["password"] = password
             save_data()
             print(GREEN + "Valid password! Wait..." + RESET)
@@ -74,6 +76,7 @@ def registration():
             print(CYAN + "-"*28)
             print("| Registration successful! |")
             print("-"*28 + RESET)
+            #checks for a valid phone number
             return phone_number_checker()
         else:
             print(RED + "Sorry, invalid password!\nIt must have:\n*At least one number\n*One uppercase and one lowercase\n*One special symbol\n*Between 6 and 20 characters\nTry again!" + RESET)
@@ -85,12 +88,16 @@ def phone_number_checker():
     pattern_phone = r"^(\+49)[0-9]{8,12}$"
     while phone == False:
         phone_number = input("Enter phone number to continue (it must start with +49, no spaces): ").strip()
+        #checks if the phone number is valid
         if re.search(pattern_phone,phone_number):
+            #if the phone number is valid, it saves it
             phone = True
             users[current_user]["phone_number"] = phone_number
+            #and creates a subdictionary for the future items
             users[current_user]["items"] = {}
             save_data()
             print(GREEN + "Valid phone number!" + RESET)
+            #when everything works, it promps to the login
             return log_in()
         else:
             print(RED + "Invalid number... please try again" + RESET)
@@ -105,14 +112,18 @@ def log_in():
     print("| Log In |")
     print("-"*10 + RESET)
     print("")
+    #checks for the username
     while try_name == True:
         username_log = input("Write your username: ").strip()
+        #if the username is not found, asks the user if they are sure they are registered
         if username_log not in users:
                 username_checking = True
                 while username_checking == True:
                     registration_checking = input(RED + "There is nobody with that username, are you sure you have registered already? (y/n): " + RESET).lower().strip()
+                    #if they are sure, it asks another time for the username
                     if registration_checking == "y":
                         username_checking = False
+                    #if not, prompts the user to registration
                     elif registration_checking == "n":
                         print(CYAN + "Let's register to Amazon!" + RESET)
                         return registration()
@@ -120,30 +131,36 @@ def log_in():
                         print("")
                         print(RED + "The operation selected is not valid: please choose from the available options." + RESET)
                         print("")
+        #if the username is found, it asks for the password up to 3 times
         else:
             try_name = True
             current_user = username_log
             password_log = input("Write your password: ").strip()
             while attempts >= 0:
+                #for the last attempt, it asks one more time after 5s
                 if attempts == 0:
                     print(RED + "You are out of guesses! Wait 5 seconds..." + RESET)
                     time.sleep(5)
                     password_log = input("Write your password: ").strip()
+                    #if it is again wrong, it exits the program
                     if password_log != users[current_user]["password"]:
                         print(RED + "Wrong again! Sorry, you have to restart the process." + RESET)
                         sys.exit()
+                    #if it is right, goes on to options
                     else:
                         print(YELLOW + "")
                         print("*"*43)
                         print("*** Welcome to Amazon Expenses Tracker! ***")
                         print("*"*43 + RESET)
                         return options()
+                #if the password is correct, options() follows
                 elif password_log == users[current_user]["password"]:
                     print("")
                     print(YELLOW + "*"*43)
                     print("*** Welcome to Amazon Expenses Tracker! ***")
                     print("*"*43 + RESET)
                     return options()
+                #if the pass is wrong but NOT the last attempt, it takes one away and asks again for the password
                 else:
                     attempts -= 1
                     print(RED + "Wrong password... try again!" + RESET)
@@ -167,6 +184,7 @@ def options():
             print("")
             print(RED + "The operation selected is not valid: please choose from the available options." + RESET)
             print("")
+#let the user choose between adding items, printing a report, or quitting the program
 
 def register_item():
     new_key = "item"+str(len(users[current_user]["items"])+1)
@@ -221,6 +239,7 @@ def register_item():
     users[current_user]["items"][new_key] = new_item
     save_data()
     options()
+#it allows the user to put one item at a time
 
 def print_report():
     global current_user
@@ -271,15 +290,14 @@ def print_report():
         else:
             print(CYAN + "Note: You have exceeded the spending limit of 500 EURO" + RESET)
         return options()
+#it allows the user to pring a report, or a message when there are no registered items
 
 def exit_program():
     print("Quitting program...")
     time.sleep(2)
     print(f"{CYAN}Thank you for your visit, {current_user}. Goodbye!{RESET}")
     sys.exit()
-    
-
-#let the user choose between adding items, printing a report, or quitting the program
+#exits the program
 
 #############################end of functions
 
